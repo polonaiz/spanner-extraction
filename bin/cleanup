@@ -1,0 +1,9 @@
+#!/usr/bin/env php
+<?php
+
+namespace SpannerTester;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+$spannerTester = new SpannerTester();
+$spannerTester->cleanup();

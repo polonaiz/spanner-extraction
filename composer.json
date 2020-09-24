@@ -1,0 +1,27 @@
+{
+	"name": "polonaiz/spanner-extraction-test",
+	"version": "0.0.1",
+	"require": {
+		"php": "^7.4",
+		"google/cloud": "*",
+		"phalcon/cli-options-parser": "1.2.*",
+		"ext-json": "*",
+		"ext-protobuf": "*",
+		"ext-grpc": "*"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "9.*"
+	},
+	"autoload": {
+		"psr-4": {
+			"SpannerTester\\": [
+				"src",
+				"tests"
+			],
+			"ArrayHelper\\": [
+				"lib/ArrayHelper/src",
+				"lib/ArrayHelper/tests"
+			]
+		}
+	}
+}

@@ -1,0 +1,20 @@
+#!/usr/bin/env php
+<?php
+
+namespace SpannerTester;
+
+use Phalcon\Cop\Parser;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+global $argv;
+$cliParser = new Parser();
+$cliParams = $cliParser->parse($argv);
+$begin = $cliParams['begin'];
+$end = $begin + $cliParams['size'];
+
+$spannerTester = new SpannerTester();
+$spannerTester->ingest([
+	'begin' => $begin,
+	'end' => $end,
+]);
