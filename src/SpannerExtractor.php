@@ -1,13 +1,13 @@
 <?php
 
-namespace SpannerTester;
+namespace SpannerExtractor;
 
 use ArrayHelper\ArrayHelper;
 use Exception;
 use Google\Cloud\Spanner\Database;
 use Google\Cloud\Spanner\SpannerClient;
 
-class SpannerTester
+class SpannerExtractor
 {
 	private $config;
 
@@ -16,10 +16,11 @@ class SpannerTester
 		$this->config =
 			$config + [
 				'suppressKeyFileNotice' => true,
-				'instanceName' => 'test-instance-asia-northeast3',
+				'instanceName' => 'test-instance',
 				'instanceConfigurationName' => 'regional-asia-northeast3', // # gcloud spanner instance-configs list
 				'databaseName' => 'test-database',
-				'logger' => function (array $message) {
+				'logger' => function (array $message)
+				{
 					echo \json_encode($message) . PHP_EOL;
 				}
 			];
@@ -184,7 +185,8 @@ class SpannerTester
 		$primaryKeyColumns =
 			\iterator_to_array(extractPrimaryColumns($database, $tableName));
 		$orderBy =
-			(new ArrayHelper($primaryKeyColumns))->map(function ($primaryKeyColumn) {
+			(new ArrayHelper($primaryKeyColumns))->map(function ($primaryKeyColumn)
+			{
 				return "{$primaryKeyColumn['COLUMN_NAME']} {$primaryKeyColumn['COLUMN_ORDERING']}";
 			})->implode(', ')->get();
 		$query =
@@ -227,13 +229,66 @@ class SpannerTester
 				'type' => 'instanceDeleted',
 				'instanceName' => $instanceName
 			]);
-		}
-		else
+		} else
 		{
 			$this->config['logger']([
 				'type' => 'instanceNotExists',
 				'instanceName' => $instanceName
 			]);
+		}
+	}
+
+	/**
+	 * @throws \Throwable
+	 */
+	public function informationSchemaTables(): \Generator
+	{
+		$spannerClient = new SpannerClient($this->config);
+
+		$database = $spannerClient->connect(
+			$this->config['instanceName'],
+			$this->config['databaseName']
+		);
+		$query = <<<SQL
+			SELECT
+			  *
+			FROM
+			  INFORMATION_SCHEMA.TABLES
+			WHERE
+			  TABLE_CATALOG = '' AND TABLE_SCHEMA = ''
+		SQL;
+		foreach (self::extractQueryResultRows($database, $query) as $row)
+		{
+			yield $row;
+		}
+	}
+
+	private static function extractQueryResultRows(Database $database, string $query): \Generator
+	{
+		$result = $database->execute($query);
+		foreach ($result->rows() as $row)
+		{
+			yield $row;
+		}
+	}
+
+	public function rows($table): \Generator
+	{
+		$spanner = new SpannerClient($this->config);
+
+		$database = $spanner->connect(
+			$this->config['instanceName'],
+			$this->config['databaseName']
+		);
+		$query = <<<SQL
+			SELECT
+			  *
+			FROM
+			  {$table}
+		SQL;
+		foreach (self::extractQueryResultRows($database, $query) as $row)
+		{
+			yield $row;
 		}
 	}
 }

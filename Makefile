@@ -1,5 +1,5 @@
-RUNTIME_TAG='polonaiz/spanner-extraction-test'
-RUNTIME_DEV_TAG='polonaiz/spanner-extraction-test-dev'
+RUNTIME_TAG='polonaiz/spanner-extractor'
+RUNTIME_DEV_TAG='polonaiz/spanner-extractor-dev'
 
 build: \
 	runtime-build \
@@ -55,18 +55,24 @@ emulator-setup-in-runtime:
 	docker run --rm --network 'host' \
 		-e SPANNER_EMULATOR_HOST=localhost:9010 \
 		-v $(shell pwd):/opt/project \
- 		${RUNTIME_TAG} php /opt/project/bin/setup
+ 		${RUNTIME_TAG} php /opt/project/bin/tester-cli-setup
 
 emulator-ingest-in-runtime:
-	seq 0 10000 1000000 | parallel -j8 -n1 --verbose "docker run \
+	seq 0 10000 10000 | parallel -j8 -n1 --verbose "docker run \
 	--rm --network 'host' -e SPANNER_EMULATOR_HOST=localhost:9010 \
-	-v $(shell pwd):/opt/project ${RUNTIME_TAG} php /opt/project/bin/ingest --begin={} --size=10000"
+	-v $(shell pwd):/opt/project ${RUNTIME_TAG} php /opt/project/bin/tester-cli-ingest --begin={} --size=10000"
 
 emulator-extract-in-runtime:
 	docker run --rm --network 'host' \
 		-e SPANNER_EMULATOR_HOST=localhost:9010 \
 		-v $(shell pwd):/opt/project \
- 		${RUNTIME_TAG} php /opt/project/bin/extract
+ 		${RUNTIME_TAG} php /opt/project/bin/tester-cli-extract
+
+cli-extract-emulator-in-runtime:
+	docker run --rm --network 'host' \
+		-e SPANNER_EMULATOR_HOST=localhost:9010 \
+		-v $(shell pwd):/opt/project \
+ 		${RUNTIME_TAG} /opt/project/bin/spanner-extractor-cli extract --instance=test-instance --database=test-database
 
 cloud-application-default-login:
 	gcloud auth application-default login

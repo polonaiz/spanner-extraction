@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+
+namespace SpannerExtractor;
+
+use SpannerExtractor\Cli\Cli;
+
+require_once __DIR__ . "/../vendor/autoload.php";
+
+/** @noinspection PhpUnhandledExceptionInspection */
+Cli::main();
+
+

@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-namespace SpannerTester;
+namespace SpannerExtractor;
 
 use Phalcon\Cop\Parser;
 
@@ -13,7 +13,7 @@ $cliParams = $cliParser->parse($argv);
 $begin = $cliParams['begin'];
 $end = $begin + $cliParams['size'];
 
-$spannerTester = new SpannerTester();
+$spannerTester = new SpannerExtractor();
 $spannerTester->ingest([
 	'begin' => $begin,
 	'end' => $end,

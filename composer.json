@@ -1,20 +1,21 @@
 {
-	"name": "polonaiz/spanner-extraction-test",
+	"name": "polonaiz/spanner-extractor",
 	"version": "0.0.1",
 	"require": {
 		"php": "^7.4",
 		"google/cloud": "*",
-		"phalcon/cli-options-parser": "1.2.*",
 		"ext-json": "*",
 		"ext-protobuf": "*",
-		"ext-grpc": "*"
+		"ext-grpc": "*",
+		"phalcon/cli-options-parser": "1.2.*",
+		"polonaiz/scratch-pad": "0.0.15"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "9.*"
 	},
 	"autoload": {
 		"psr-4": {
-			"SpannerTester\\": [
+			"SpannerExtractor\\": [
 				"src",
 				"tests"
 			],
